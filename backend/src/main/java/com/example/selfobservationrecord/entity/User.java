@@ -24,4 +24,11 @@ public class User {
     private LocalDateTime updatedAt;
 
     // getter / setter は後で追加
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }
