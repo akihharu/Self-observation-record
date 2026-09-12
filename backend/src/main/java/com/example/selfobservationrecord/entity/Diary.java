@@ -43,4 +43,23 @@ public class Diary {
     private LocalDateTime updatedAt;
 
     // getter / setter は後で追加
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setRecordDate(LocalDate recordDate) {
+        this.recordDate = recordDate;
+    }
+
+    public void setEvent(String event) {
+        this.event = event;
+    }
+
+    public void setReflection(String reflection) {
+        this.reflection = reflection;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
 }
