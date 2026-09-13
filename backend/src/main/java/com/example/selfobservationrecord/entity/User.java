@@ -40,4 +40,12 @@ public class User {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
 }
