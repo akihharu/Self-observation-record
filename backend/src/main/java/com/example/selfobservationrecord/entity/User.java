@@ -48,4 +48,9 @@ public class User {
     public String getUserId() {
         return userId;
     }
+
+
+    public Integer getId() {
+        return id;
+    }
 }

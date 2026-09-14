@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import com.example.selfobservationrecord.dto.UserLoginRequest;
 import com.example.selfobservationrecord.dto.UserLoginResponse;
 import org.springframework.web.server.ResponseStatusException;
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/api/users")
@@ -35,7 +36,10 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public UserLoginResponse login(@Valid @RequestBody UserLoginRequest request) {
+    public UserLoginResponse login(
+        @Valid @RequestBody UserLoginRequest request,
+        HttpSession session
+    ) {
     
         User user = userService.login(
                 request.getUserId(),
@@ -48,7 +52,15 @@ public class UserController {
                     "Invalid user ID or password"
             );
         }
+
+        session.setAttribute("userId", user.getId());
     
         return new UserLoginResponse(user.getUserId());
+    }
+
+    @PostMapping("/logout")
+    @ResponseStatus(HttpStatus.OK)
+    public void logout(HttpSession session) {
+        session.invalidate();
     }
 }
