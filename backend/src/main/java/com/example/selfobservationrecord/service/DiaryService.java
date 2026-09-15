@@ -6,7 +6,11 @@ import com.example.selfobservationrecord.repository.DiaryRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class DiaryService {
@@ -24,13 +28,30 @@ public class DiaryService {
             String reflection,
             Integer status
     ) {
+
+        if (status == 1 && (reflection == null || reflection.isBlank())) {
+            throw new ResponseStatusException(
+            HttpStatus.BAD_REQUEST,
+            "Reflection is required for completed diary.");
+        }
+
+        if (diaryRepository.findByUserAndRecordDate(user, recordDate).isPresent()) {
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "A diary already exists for this date."
+            );
+        }
         Diary diary = new Diary();
+
+        LocalDateTime now = LocalDateTime.now();
 
         diary.setUser(user);
         diary.setRecordDate(recordDate);
         diary.setEvent(event);
         diary.setReflection(reflection);
         diary.setStatus(status);
+        diary.setCreatedAt(now);
+        diary.setUpdatedAt(now);
 
         return diaryRepository.save(diary);
     }
@@ -56,10 +77,14 @@ public class DiaryService {
             return null;
         }
 
+        LocalDateTime now = LocalDateTime.now();
+
         diary.setRecordDate(recordDate);
         diary.setEvent(event);
         diary.setReflection(reflection);
         diary.setStatus(status);
+        diary.setCreatedAt(now);
+        diary.setUpdatedAt(now);
 
         return diaryRepository.save(diary);
     }
