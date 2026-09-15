@@ -70,4 +70,24 @@ public class Diary {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public LocalDate getRecordDate() {
+        return recordDate;
+    }
+
+    public String getEvent() {
+        return event;
+    }  
+
+    public String getReflection() {
+        return reflection;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }  
 }

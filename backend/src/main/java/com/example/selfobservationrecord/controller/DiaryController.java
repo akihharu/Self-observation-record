@@ -14,6 +14,8 @@ import com.example.selfobservationrecord.dto.DiaryCreateRequest;
 
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/diaries")
 public class DiaryController {
@@ -70,5 +72,54 @@ public class DiaryController {
                   request.getReflection(),
                   request.getStatus()
                 );
+    }
+
+    @GetMapping
+    public List<Diary> getDiaries(
+        HttpSession session
+    ){
+            Integer userId = (Integer) session.getAttribute("userId");
+            if (userId == null){
+                throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "Please log in."
+                );
+            }
+            Optional<User> userOptional = userRepository.findById(userId);
+            if (userOptional.isEmpty()) {
+                throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "User not found"
+                );
+            }
+
+            User user = userOptional.get();  
+
+            return  diaryService.getDiaries(user);
+    }
+
+    @GetMapping("/{id}")
+    public Diary getDiary(
+        @PathVariable Integer id,
+        HttpSession session
+        ) {
+            Integer userId = (Integer) session.getAttribute("userId");
+
+            if (userId == null) {
+                throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "Please log in."
+                );
+            }
+
+            Diary diary = diaryService.getDiary(id);
+            
+            if (diary == null) {
+                throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Diary not found"
+                );
+            }
+            return diary;
     }
 }
