@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import jakarta.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(
     name = "diaries",
@@ -61,5 +63,38 @@ public class Diary {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public LocalDate getRecordDate() {
+        return recordDate;
+    }
+
+    public String getEvent() {
+        return event;
+    }  
+
+    public String getReflection() {
+        return reflection;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }  
+    
+    @JsonIgnore
+    public User getUser() {
+        return user;
     }
 }
