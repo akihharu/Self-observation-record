@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import jakarta.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(
     name = "diaries",
@@ -90,4 +92,9 @@ public class Diary {
     public Integer getStatus() {
         return status;
     }  
+    
+    @JsonIgnore
+    public User getUser() {
+        return user;
+    }
 }

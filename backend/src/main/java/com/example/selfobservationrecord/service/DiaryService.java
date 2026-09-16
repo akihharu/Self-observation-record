@@ -84,7 +84,7 @@ public class DiaryService {
         diary.setReflection(reflection);
         diary.setStatus(status);
         diary.setCreatedAt(now);
-        diary.setUpdatedAt(now);
+        diary.setUpdatedAt(LocalDateTime.now());
 
         return diaryRepository.save(diary);
     }

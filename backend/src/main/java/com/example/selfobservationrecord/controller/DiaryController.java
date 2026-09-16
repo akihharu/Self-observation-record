@@ -120,6 +120,64 @@ public class DiaryController {
                     "Diary not found"
                 );
             }
+
+            if (!diary.getUser().getId().equals(userId)) {
+                throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "You cannot view this diary."
+                );
+            }
+            
             return diary;
+    }
+
+    @PutMapping("/{id}")
+    public Diary updateDiary(
+        @PathVariable Integer id,
+        @Valid @RequestBody DiaryCreateRequest request,
+        HttpSession session
+    ) {
+        Integer userId = (Integer) session.getAttribute("userId");
+
+            if (userId == null) {
+                throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "Please log in."
+                );
+            }
+
+            Diary diary = diaryService.getDiary(id);
+
+            if (diary == null) {
+                throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Diary not found"
+                );
+            }
+
+            if (!diary.getUser().getId().equals(userId)) {
+                throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "You cannot update this diary."
+                );
+            }
+
+            if (request.getStatus() == 1
+                    && (request.getReflection() == null
+                    || request.getReflection().isBlank())) {
+        
+                throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Please write reflection."
+                );
+            }
+
+            return diaryService.updateDiary(
+                  id,
+                  request.getRecordDate(),
+                  request.getEvent(),
+                  request.getReflection(),
+                  request.getStatus()
+                );
     }
 }

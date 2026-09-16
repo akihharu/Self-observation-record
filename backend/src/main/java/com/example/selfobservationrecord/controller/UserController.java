@@ -26,7 +26,9 @@ public class UserController {
     public User signup(@Valid @RequestBody UserSignupRequest request) {
 
         if (userService.existsByUserId(request.getUserId())) {
-            throw new IllegalArgumentException("User ID already exists");
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "User ID already exists");
         }
 
         return userService.createUser(
