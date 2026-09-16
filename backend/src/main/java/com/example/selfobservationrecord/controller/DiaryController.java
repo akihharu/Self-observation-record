@@ -127,7 +127,7 @@ public class DiaryController {
                     "You cannot view this diary."
                 );
             }
-            
+
             return diary;
     }
 
@@ -180,4 +180,38 @@ public class DiaryController {
                   request.getStatus()
                 );
     }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteDiary(
+        @PathVariable Integer id,
+        HttpSession session
+    ) {
+        Integer userId = (Integer) session.getAttribute("userId");
+
+            if (userId == null) {
+                throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "Please log in."
+                );
+            }
+
+            Diary diary = diaryService.getDiary(id);
+            
+            if (diary == null) {
+                throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Diary not found"
+                );
+            }
+
+            if (!diary.getUser().getId().equals(userId)) {
+                throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "You cannot delete this diary."
+                );
+            }
+
+            diaryService.deleteDiary(id);
+      }
 }
