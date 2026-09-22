@@ -30,6 +30,13 @@ public class DiaryService {
             Integer status
     ) {
 
+        if (status != 0 && status != 1) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Status must be 0 or 1."
+            );
+        }
+
         if (status == 1 && (reflection == null || reflection.isBlank())) {
             throw new ResponseStatusException(
             HttpStatus.BAD_REQUEST,
@@ -78,6 +85,20 @@ public class DiaryService {
 
         if (diary == null) {
             return null;
+        }
+
+        if (status != 0 && status != 1) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Status must be 0 or 1."
+            );
+        }
+
+        if (status == 1 && (reflection == null || reflection.isBlank())) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Reflection is required for completed diary."
+            );
         }
 
         Diary existingDiary =
