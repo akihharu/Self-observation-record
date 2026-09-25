@@ -11,6 +11,7 @@ import com.example.selfobservationrecord.entity.User;
 import com.example.selfobservationrecord.repository.UserRepository;
 import java.util.Optional;
 import com.example.selfobservationrecord.dto.DiaryCreateRequest;
+import com.example.selfobservationrecord.dto.DiaryUpdateRequest;
 
 import org.springframework.web.server.ResponseStatusException;
 
@@ -134,7 +135,7 @@ public class DiaryController {
     @PutMapping("/{id}")
     public Diary updateDiary(
         @PathVariable Integer id,
-        @Valid @RequestBody DiaryCreateRequest request,
+        @Valid @RequestBody DiaryUpdateRequest request,
         HttpSession session
     ) {
         Integer userId = (Integer) session.getAttribute("userId");
@@ -177,7 +178,8 @@ public class DiaryController {
                   request.getRecordDate(),
                   request.getEvent(),
                   request.getReflection(),
-                  request.getStatus()
+                  request.getStatus(),
+                  request.isOverwrite()
                 );
     }
 

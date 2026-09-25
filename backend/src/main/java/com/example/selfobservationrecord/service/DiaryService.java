@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class DiaryService {
@@ -28,6 +29,13 @@ public class DiaryService {
             String reflection,
             Integer status
     ) {
+
+        if (status != 0 && status != 1) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Status must be 0 or 1."
+            );
+        }
 
         if (status == 1 && (reflection == null || reflection.isBlank())) {
             throw new ResponseStatusException(
@@ -64,17 +72,52 @@ public class DiaryService {
         return diaryRepository.findById(id).orElse(null);
     }
 
+    @Transactional
     public Diary updateDiary(
             Integer id,
             LocalDate recordDate,
             String event,
             String reflection,
-            Integer status
+            Integer status,
+            boolean overwrite
     ) {
         Diary diary = diaryRepository.findById(id).orElse(null);
 
         if (diary == null) {
             return null;
+        }
+
+        if (status != 0 && status != 1) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Status must be 0 or 1."
+            );
+        }
+
+        if (status == 1 && (reflection == null || reflection.isBlank())) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Reflection is required for completed diary."
+            );
+        }
+
+        Diary existingDiary =
+                diaryRepository.findByUserAndRecordDate(
+                        diary.getUser(),
+                        recordDate
+                ).orElse(null);
+
+        if (existingDiary != null && !existingDiary.getId().equals(id)) {
+        
+            if (!overwrite) {
+                throw new ResponseStatusException(
+                        HttpStatus.CONFLICT,
+                        "A diary already exists for this date."
+                );
+            }
+        
+            diaryRepository.delete(existingDiary);
+            diaryRepository.flush();
         }
 
         LocalDateTime now = LocalDateTime.now();
@@ -83,8 +126,7 @@ public class DiaryService {
         diary.setEvent(event);
         diary.setReflection(reflection);
         diary.setStatus(status);
-        diary.setCreatedAt(now);
-        diary.setUpdatedAt(LocalDateTime.now());
+        diary.setUpdatedAt(now);
 
         return diaryRepository.save(diary);
     }
