@@ -44,4 +44,55 @@ class DiaryServiceTest {
                         false
                 )
         );
+    }
+
+    @Test
+    void completedDiaryWithoutReflectionThrowsException() {
+
+        Diary diary = new Diary();
+
+        when(diaryRepository.findById(7))
+                .thenReturn(Optional.of(diary));
+
+        assertThrows(
+                ResponseStatusException.class,
+                () -> diaryService.updateDiary(
+                        7,
+                        LocalDate.of(2026, 9, 23),
+                        "test",
+                        "",
+                        1,
+                        false
+                )
+        );
+    }
+
+    @Test
+    void duplicateDateWithoutOverwriteThrowsException() {
+    
+        Diary diary = new Diary();
+        Diary existingDiary = org.mockito.Mockito.mock(Diary.class);
+    
+        when(existingDiary.getId()).thenReturn(8);
+    
+        when(diaryRepository.findById(7))
+                .thenReturn(Optional.of(diary));
+    
+        when(diaryRepository.findByUserAndRecordDate(
+                diary.getUser(),
+                LocalDate.of(2026, 9, 23)
+        )).thenReturn(Optional.of(existingDiary));
+    
+        assertThrows(
+                ResponseStatusException.class,
+                () -> diaryService.updateDiary(
+                        7,
+                        LocalDate.of(2026, 9, 23),
+                        "test",
+                        "test",
+                        0,
+                        false
+                )
+        );
+    }
 }
