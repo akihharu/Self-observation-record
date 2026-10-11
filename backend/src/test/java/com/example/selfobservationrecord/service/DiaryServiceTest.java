@@ -15,6 +15,7 @@ import com.example.selfobservationrecord.entity.Diary;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class DiaryServiceTest {
@@ -95,4 +96,36 @@ class DiaryServiceTest {
                 )
         );
     }
+
+    @Test
+    void duplicateDateWithOverwriteUpdatesDiary() {
+
+        Diary diary = new Diary();
+        Diary existingDiary = org.mockito.Mockito.mock(Diary.class);
+
+        when(existingDiary.getId()).thenReturn(8);
+
+        when(diaryRepository.findById(7))
+                .thenReturn(Optional.of(diary));
+
+        when(diaryRepository.findByUserAndRecordDate(
+                diary.getUser(),
+                LocalDate.of(2026, 9, 23)
+        )).thenReturn(Optional.of(existingDiary));
+
+        diaryService.updateDiary(
+                7,
+                LocalDate.of(2026, 9, 23),
+                "updated",
+                "updated reflection",
+                1,
+                true
+        );
+
+        verify(diaryRepository).delete(existingDiary);
+        verify(diaryRepository).flush();
+        verify(diaryRepository).save(diary);
+    }
+
+
 }
