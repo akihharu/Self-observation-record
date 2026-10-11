@@ -127,5 +127,19 @@ class DiaryServiceTest {
         verify(diaryRepository).save(diary);
     }
 
+    @Test
+    void createDiaryWithInvalidStatusThrowsException() {
+
+        assertThrows(
+                ResponseStatusException.class,
+                () -> diaryService.createDiary(
+                        null,
+                        LocalDate.of(2026, 9, 24),
+                        "test",
+                        "test",
+                        2
+                )
+        );
+    }
 
 }
