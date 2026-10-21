@@ -142,4 +142,18 @@ class DiaryServiceTest {
         );
     }
 
+    @Test
+    void createDiaryCompletedWithoutReflectionThrowsException() {
+
+        assertThrows(
+                ResponseStatusException.class,
+                () -> diaryService.createDiary(
+                        null,
+                        LocalDate.of(2026, 9, 25),
+                        "test",
+                        "",
+                        1
+                )
+        );
+    }
 }
