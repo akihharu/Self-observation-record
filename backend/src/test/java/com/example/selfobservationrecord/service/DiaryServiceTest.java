@@ -17,6 +17,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 
+import com.example.selfobservationrecord.entity.User;
+
 @ExtendWith(MockitoExtension.class)
 class DiaryServiceTest {
 
@@ -156,4 +158,26 @@ class DiaryServiceTest {
                 )
         );
     }
+
+    @Test
+    void createDiaryDuplicateDateThrowsException() {
+        User user = new User();
+        user.setUserId("testuser");
+        user.setPassword("password123");
+
+        LocalDate recordDate = LocalDate.of(2026, 9, 26);
+
+        Diary existingDiary = new Diary();
+
+        when(diaryRepository.findByUserAndRecordDate(user, recordDate))
+                .thenReturn(Optional.of(existingDiary));
+
+        assertThrows(
+                ResponseStatusException.class,
+                () -> diaryService.createDiary(
+                        user, recordDate, "test", "", 0
+                )
+        );
+    }
+
 }
