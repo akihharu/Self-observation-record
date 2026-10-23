@@ -1,6 +1,10 @@
 package com.example.selfobservationrecord.service;
 
 import com.example.selfobservationrecord.repository.DiaryRepository;
+import org.mockito.ArgumentCaptor;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -180,4 +184,32 @@ class DiaryServiceTest {
         );
     }
 
+    @Test
+    void createDiarySuccessfullySavesDiary() {
+        User user = new User();
+        user.setUserId("testuser");
+        user.setPassword("password123");
+
+        LocalDate recordDate = LocalDate.of(2026, 9, 27);
+
+        when(diaryRepository.findByUserAndRecordDate(user, recordDate))
+                .thenReturn(Optional.empty());
+
+        ArgumentCaptor<Diary> captor =
+                ArgumentCaptor.forClass(Diary.class);
+
+        diaryService.createDiary(
+                user, recordDate, "test event", "test reflection", 1
+        );
+
+        verify(diaryRepository).save(captor.capture());
+
+        Diary savedDiary = captor.getValue();
+
+        assertSame(user, savedDiary.getUser());
+        assertEquals(recordDate, savedDiary.getRecordDate());
+        assertEquals("test event", savedDiary.getEvent());
+        assertEquals("test reflection", savedDiary.getReflection());
+        assertEquals(1, savedDiary.getStatus());
+    }
 }
