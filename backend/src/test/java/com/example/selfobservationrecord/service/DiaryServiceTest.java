@@ -212,4 +212,33 @@ class DiaryServiceTest {
         assertEquals("test reflection", savedDiary.getReflection());
         assertEquals(1, savedDiary.getStatus());
     }
+
+    @Test
+    void createDiaryDraftSuccessfullySavesDiary() {
+        User user = new User();
+        user.setUserId("testuser");
+        user.setPassword("password123");
+
+        LocalDate recordDate = LocalDate.of(2026, 9, 28);
+
+        when(diaryRepository.findByUserAndRecordDate(user, recordDate))
+                .thenReturn(Optional.empty());
+
+        ArgumentCaptor<Diary> captor =
+                ArgumentCaptor.forClass(Diary.class);
+
+        diaryService.createDiary(
+                user, recordDate, "test event", "", 0
+        );
+
+        verify(diaryRepository).save(captor.capture());
+
+        Diary savedDiary = captor.getValue();
+
+        assertSame(user, savedDiary.getUser());
+        assertEquals(recordDate, savedDiary.getRecordDate());
+        assertEquals("test event", savedDiary.getEvent());
+        assertEquals("", savedDiary.getReflection());
+        assertEquals(0, savedDiary.getStatus());
+    }
 }
