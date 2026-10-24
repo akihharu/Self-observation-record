@@ -241,4 +241,37 @@ class DiaryServiceTest {
         assertEquals("", savedDiary.getReflection());
         assertEquals(0, savedDiary.getStatus());
     }
+
+    @Test
+    void updateDiaryWithoutDuplicateDateUpdatesDiary() {
+        Diary diary = new Diary();
+
+        LocalDate recordDate = LocalDate.of(2026, 9, 29);
+
+        when(diaryRepository.findById(7))
+                .thenReturn(Optional.of(diary));
+
+        when(diaryRepository.findByUserAndRecordDate(
+                diary.getUser(),
+                recordDate
+        )).thenReturn(Optional.empty());
+        when(diaryRepository.save(diary)).thenReturn(diary);
+
+        Diary updatedDiary = diaryService.updateDiary(
+                7,
+                recordDate,
+                "updated event",
+                "updated reflection",
+                1,
+                false
+        );
+
+        assertSame(diary, updatedDiary);
+        assertEquals(recordDate, updatedDiary.getRecordDate());
+        assertEquals("updated event", updatedDiary.getEvent());
+        assertEquals("updated reflection", updatedDiary.getReflection());
+        assertEquals(1, updatedDiary.getStatus());
+
+        verify(diaryRepository).save(diary);
+    }
 }
