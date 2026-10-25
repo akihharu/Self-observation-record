@@ -115,14 +115,17 @@ Dockerを使用してJavaとPostgreSQLの開発環境を構築する予定です
 - [x] アプリのアイデア決定
 - [x] 解決したい課題の整理
 - [x] 要件定義
-- [ ] ER図作成
-- [ ] API設計
-- [ ] 開発環境構築
-- [ ] 日記機能
-- [ ] 下書き機能
+- [x] ER図作成
+- [x] API設計
+- [x] 開発環境構築
+- [x] 日記機能
+- [x] 下書き機能
 - [ ] テスト
 - [ ] デプロイ
 
+ER図
+
+https://drive.google.com/file/d/1XOS2H4WzxXgsrNcYZu8NXYiJtcDtLIuY/view?usp=sharing
 ---
 
 ## この開発で学びたいこと
