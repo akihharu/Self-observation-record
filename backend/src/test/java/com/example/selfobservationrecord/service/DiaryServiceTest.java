@@ -1,6 +1,11 @@
 package com.example.selfobservationrecord.service;
 
 import com.example.selfobservationrecord.repository.DiaryRepository;
+
+import org.mockito.ArgumentCaptor;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,6 +20,9 @@ import com.example.selfobservationrecord.entity.Diary;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+
+import com.example.selfobservationrecord.entity.User;
 
 @ExtendWith(MockitoExtension.class)
 class DiaryServiceTest {
@@ -94,5 +102,177 @@ class DiaryServiceTest {
                         false
                 )
         );
+    }
+
+    @Test
+    void duplicateDateWithOverwriteUpdatesDiary() {
+
+        Diary diary = new Diary();
+        Diary existingDiary = org.mockito.Mockito.mock(Diary.class);
+
+        when(existingDiary.getId()).thenReturn(8);
+
+        when(diaryRepository.findById(7))
+                .thenReturn(Optional.of(diary));
+
+        when(diaryRepository.findByUserAndRecordDate(
+                diary.getUser(),
+                LocalDate.of(2026, 9, 23)
+        )).thenReturn(Optional.of(existingDiary));
+
+        diaryService.updateDiary(
+                7,
+                LocalDate.of(2026, 9, 23),
+                "updated",
+                "updated reflection",
+                1,
+                true
+        );
+
+        verify(diaryRepository).delete(existingDiary);
+        verify(diaryRepository).flush();
+        verify(diaryRepository).save(diary);
+    }
+
+    @Test
+    void createDiaryWithInvalidStatusThrowsException() {
+
+        assertThrows(
+                ResponseStatusException.class,
+                () -> diaryService.createDiary(
+                        null,
+                        LocalDate.of(2026, 9, 24),
+                        "test",
+                        "test",
+                        2
+                )
+        );
+    }
+
+    @Test
+    void createDiaryCompletedWithoutReflectionThrowsException() {
+
+        assertThrows(
+                ResponseStatusException.class,
+                () -> diaryService.createDiary(
+                        null,
+                        LocalDate.of(2026, 9, 25),
+                        "test",
+                        "",
+                        1
+                )
+        );
+    }
+
+    @Test
+    void createDiaryDuplicateDateThrowsException() {
+        User user = new User();
+        user.setUserId("testuser");
+        user.setPassword("password123");
+
+        LocalDate recordDate = LocalDate.of(2026, 9, 26);
+
+        Diary existingDiary = new Diary();
+
+        when(diaryRepository.findByUserAndRecordDate(user, recordDate))
+                .thenReturn(Optional.of(existingDiary));
+
+        assertThrows(
+                ResponseStatusException.class,
+                () -> diaryService.createDiary(
+                        user, recordDate, "test", "", 0
+                )
+        );
+    }
+
+    @Test
+    void createDiarySuccessfullySavesDiary() {
+        User user = new User();
+        user.setUserId("testuser");
+        user.setPassword("password123");
+
+        LocalDate recordDate = LocalDate.of(2026, 9, 27);
+
+        when(diaryRepository.findByUserAndRecordDate(user, recordDate))
+                .thenReturn(Optional.empty());
+
+        ArgumentCaptor<Diary> captor =
+                ArgumentCaptor.forClass(Diary.class);
+
+        diaryService.createDiary(
+                user, recordDate, "test event", "test reflection", 1
+        );
+
+        verify(diaryRepository).save(captor.capture());
+
+        Diary savedDiary = captor.getValue();
+
+        assertSame(user, savedDiary.getUser());
+        assertEquals(recordDate, savedDiary.getRecordDate());
+        assertEquals("test event", savedDiary.getEvent());
+        assertEquals("test reflection", savedDiary.getReflection());
+        assertEquals(1, savedDiary.getStatus());
+    }
+
+    @Test
+    void createDiaryDraftSuccessfullySavesDiary() {
+        User user = new User();
+        user.setUserId("testuser");
+        user.setPassword("password123");
+
+        LocalDate recordDate = LocalDate.of(2026, 9, 28);
+
+        when(diaryRepository.findByUserAndRecordDate(user, recordDate))
+                .thenReturn(Optional.empty());
+
+        ArgumentCaptor<Diary> captor =
+                ArgumentCaptor.forClass(Diary.class);
+
+        diaryService.createDiary(
+                user, recordDate, "test event", "", 0
+        );
+
+        verify(diaryRepository).save(captor.capture());
+
+        Diary savedDiary = captor.getValue();
+
+        assertSame(user, savedDiary.getUser());
+        assertEquals(recordDate, savedDiary.getRecordDate());
+        assertEquals("test event", savedDiary.getEvent());
+        assertEquals("", savedDiary.getReflection());
+        assertEquals(0, savedDiary.getStatus());
+    }
+
+    @Test
+    void updateDiaryWithoutDuplicateDateUpdatesDiary() {
+        Diary diary = new Diary();
+
+        LocalDate recordDate = LocalDate.of(2026, 9, 29);
+
+        when(diaryRepository.findById(7))
+                .thenReturn(Optional.of(diary));
+
+        when(diaryRepository.findByUserAndRecordDate(
+                diary.getUser(),
+                recordDate
+        )).thenReturn(Optional.empty());
+        when(diaryRepository.save(diary)).thenReturn(diary);
+
+        Diary updatedDiary = diaryService.updateDiary(
+                7,
+                recordDate,
+                "updated event",
+                "updated reflection",
+                1,
+                false
+        );
+
+        assertSame(diary, updatedDiary);
+        assertEquals(recordDate, updatedDiary.getRecordDate());
+        assertEquals("updated event", updatedDiary.getEvent());
+        assertEquals("updated reflection", updatedDiary.getReflection());
+        assertEquals(1, updatedDiary.getStatus());
+
+        verify(diaryRepository).save(diary);
     }
 }
