@@ -57,7 +57,9 @@ SORではスマートフォンから記録できるようにすることで、
 
 ## 主な機能
 
-MVPリリース機能
+###バックエンド実装済み
+
+Spring BootによるREST APIとして、以下の機能を実装しています。
 
 - ユーザー登録
 - ログイン
@@ -68,9 +70,20 @@ MVPリリース機能
 - 日記の編集
 - 日記の削除
 - 日記の下書き保存
-- 日記の完了
-- 文字数の表示
+- 日記の完成保存
+- 日付変更時の重複確認と上書き処理
 
+###フロントエンド実装予定
+
+Reactで画面を実装し、バックエンドのREST APIと連携させる予定です。
+
+- ログイン画面
+- ユーザー登録画面
+- 日記一覧画面
+- 日記詳細画面
+- 日記作成・編集画面
+- 文字数表示
+- APIとのデータ連携
 ---
 
 ## 今後追加したい機能
@@ -91,12 +104,23 @@ MVPリリース機能
 
 ## 使用技術
 
+### バックエンド
 - Java 21
 - Spring Boot
 - Spring Data JPA
+- Spring Security Crypto
 - PostgreSQL
+
+### フロントエンド
+- JavaScript
+- React
+- Vite
+- ESLint
+
+### 開発・テスト
 - Docker
 - Docker Compose
+- Gradle
 - JUnit
 - Git / GitHub
 
@@ -104,7 +128,14 @@ MVPリリース機能
 
 ## 開発環境
 
-Dockerを使用してJavaとPostgreSQLの開発環境を構築する予定です。
+Docker Composeを使用して開発環境を構築しています。
+
+- Spring Boot：バックエンド
+- React：フロントエンド
+- PostgreSQL：データベース
+- Node.js：Reactの開発環境
+
+フロントエンドとバックエンドを分け、APIを通じてデータをやり取りする構成で開発を進めています。
 
 ---
 
@@ -118,14 +149,21 @@ Dockerを使用してJavaとPostgreSQLの開発環境を構築する予定です
 - [x] ER図作成
 - [x] API設計
 - [x] 開発環境構築
-- [x] 日記機能
-- [x] 下書き機能
-- [ ] テスト
+- [x] 日記機能（バックエンド）
+- [x] 下書き機能（バックエンド）
+- [x] バックエンドのテスト
+- [x] Reactの開発環境構築
+- [x] Reactの初期画面作成
+- [ ] ReactとバックエンドAPIの連携
+- [ ] ログイン・ユーザー登録画面
+- [ ] 日記の一覧・詳細・作成・編集画面
+- [ ] フロントエンドとバックエンドを含めた動作確認
 - [ ] デプロイ
 
 ER図
 
-https://drive.google.com/file/d/1XOS2H4WzxXgsrNcYZu8NXYiJtcDtLIuY/view?usp=sharing
+[ER図はこちら](https://drive.google.com/file/d/1XOS2H4WzxXgsrNcYZu8NXYJtcDtLIuY/view?usp=sharing)
+
 ---
 
 ## この開発で学びたいこと
@@ -137,7 +175,11 @@ Javaの基本的な文法だけでなく、
 - Spring Bootを使ったWebアプリケーション開発
 - データベースとの連携
 - Dockerを使った開発環境構築
-- テスト
-- Gitを使った開発
+- JUnitを使ったテスト
+- REST APIの設計と実装
+- Reactを使ったフロントエンド開発
+- APIを通じたフロントエンドとバックエンドの連携
 
 などを実際にアプリを作りながら学ぶことを目標としています。
+
+また、Reactを使用したSPAの仕組みについても理解を深め、画面の表示や更新をブラウザ側で行うWebアプリケーションの開発を経験したいと考えています。
