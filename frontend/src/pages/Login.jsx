@@ -5,12 +5,19 @@ function Login() {
   const [userId, setUserId] = useState('')
   const [password, setPassword] = useState('')
 
+  function handleSubmit(event) {
+    event.preventDefault()
+
+    console.log('ユーザーID:', userId)
+    console.log('パスワード:', password)
+  }
+
   return (
     <main className="auth-shell">
       <div className="auth-container">
         <h1>ログイン</h1>
 
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="userId">ユーザーID</label>
             <input
@@ -33,7 +40,7 @@ function Login() {
             />
           </div>
 
-          <button type="button">ログイン</button>
+          <button type="submit">ログイン</button>
         </form>
 
         <p>
