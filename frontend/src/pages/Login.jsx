@@ -1,15 +1,48 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 function Login() {
   const [userId, setUserId] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  function handleSubmit(event) {
+  const navigate = useNavigate()
+
+  async function handleSubmit(event) {
     event.preventDefault()
 
-    console.log('ユーザーID:', userId)
-    console.log('パスワード:', password)
+    setError('')
+    setIsSubmitting(true)
+
+    try {
+      const response = await fetch('http://localhost:8080/api/users/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          userId: userId,
+          password: password,
+        }),
+      })
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          setError('ユーザーIDまたはパスワードが正しくありません')
+        } else {
+          setError('ログインに失敗しました。入力内容を確認してください')
+        }
+        return
+      }
+
+      navigate('/diaries')
+    } catch {
+      setError('サーバーに接続できませんでした')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -40,7 +73,11 @@ function Login() {
             />
           </div>
 
-          <button type="submit">ログイン</button>
+          {error && <p>{error}</p>}
+
+          <button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 'ログイン中...' : 'ログイン'}
+          </button>
         </form>
 
         <p>
