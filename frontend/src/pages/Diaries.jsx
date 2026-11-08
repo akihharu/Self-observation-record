@@ -45,6 +45,10 @@ function Diaries() {
           <p>これまでの記録を振り返りましょう。</p>
         </header>
 
+        <div className="diary-actions">
+          <Link to="/diaries/new">新しい日記を書く</Link>
+        </div>
+
         {isLoading ? (
           <p>日記を読み込んでいます...</p>
         ) : error ? (
