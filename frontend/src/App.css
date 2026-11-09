@@ -269,3 +269,130 @@
     font-size: 2rem;
   }
 }
+
+.diary-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.diary-actions a {
+  display: inline-block;
+  padding: 11px 20px;
+  border-radius: 8px;
+  background: #397c69;
+  color: #ffffff;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.diary-actions a:hover {
+  background: #2f6657;
+}
+
+/* 日記作成フォーム */
+.app-container > form {
+  padding: 32px;
+  border: 1px solid #dce7e1;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 8px 24px rgba(31, 51, 45, 0.05);
+}
+
+.app-container > form .form-group {
+  margin-bottom: 24px;
+}
+
+.app-container > form .form-group label {
+  color: #1f332d;
+}
+
+.app-container > form .form-group input,
+.app-container > form .form-group textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #d1ddd6;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #46554e;
+  font: inherit;
+  box-sizing: border-box;
+}
+
+.app-container > form .form-group textarea {
+  min-height: 120px;
+  line-height: 1.8;
+  resize: vertical;
+}
+
+.app-container > form .form-group input:focus,
+.app-container > form .form-group textarea:focus {
+  outline: 2px solid #397c69;
+  outline-offset: 1px;
+  border-color: #397c69;
+}
+
+/* 日記作成時のエラー表示 */
+.app-container > form > p {
+  margin: 0 0 20px;
+  padding: 12px 16px;
+  border: 1px solid #f0c7c2;
+  border-radius: 8px;
+  background: #fff4f2;
+  color: #a23d35;
+  line-height: 1.7;
+}
+
+/* 日記の保存ボタン */
+.app-container > form > button {
+  padding: 12px 20px;
+  border: 1px solid #397c69;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    opacity 0.2s;
+}
+
+.app-container > form > button:first-of-type {
+  background: #ffffff;
+  color: #397c69;
+}
+
+.app-container > form > button:first-of-type:hover:not(:disabled) {
+  background: #edf5f0;
+}
+
+.app-container > form > button:last-of-type {
+  margin-left: 12px;
+  background: #397c69;
+  color: #ffffff;
+}
+
+.app-container > form > button:last-of-type:hover:not(:disabled) {
+  background: #2f6657;
+}
+
+.app-container > form > button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* スマートフォン表示 */
+@media (max-width: 600px) {
+  .app-container > form {
+    padding: 24px 18px;
+  }
+
+  .app-container > form > button {
+    width: 100%;
+    margin-bottom: 12px;
+  }
+
+  .app-container > form > button:last-of-type {
+    margin-left: 0;
+  }
+}
