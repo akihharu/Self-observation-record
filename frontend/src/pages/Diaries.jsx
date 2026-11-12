@@ -5,6 +5,8 @@ function Diaries() {
   const [diaries, setDiaries] = useState([])
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(true)
+  const [deleteError, setDeleteError] = useState('')
+  const [deletingDiaryId, setDeletingDiaryId] = useState(null)
 
   useEffect(() => {
     async function fetchDiaries() {
@@ -36,6 +38,59 @@ function Diaries() {
     fetchDiaries()
   }, [])
 
+  async function handleDelete(diary) {
+    const confirmed = window.confirm(
+      `${diary.recordDate}の日記を削除しますか？この操作は元に戻せません。`
+    )
+
+    if (!confirmed) {
+      return
+    }
+
+    setDeleteError('')
+    setDeletingDiaryId(diary.id)
+
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/diaries/${diary.id}`,
+        {
+          method: 'DELETE',
+          credentials: 'include',
+        }
+      )
+
+      if (response.status === 401) {
+        setDeleteError('ログインが必要です。ログインしてください。')
+        return
+      }
+
+      if (response.status === 403) {
+        setDeleteError('この日記を削除する権限がありません。')
+        return
+      }
+
+      if (response.status === 404) {
+        setDeleteError(
+          '削除対象の日記が見つかりませんでした。一覧を再読み込みしてください。'
+        )
+        return
+      }
+
+      if (!response.ok) {
+        setDeleteError('日記の削除に失敗しました。')
+        return
+      }
+
+      setDiaries((currentDiaries) =>
+        currentDiaries.filter((currentDiary) => currentDiary.id !== diary.id)
+      )
+    } catch {
+      setDeleteError('サーバーに接続できませんでした。')
+    } finally {
+      setDeletingDiaryId(null)
+    }
+  }
+
   return (
     <main className="app-shell">
       <div className="app-container">
@@ -48,6 +103,12 @@ function Diaries() {
         <div className="diary-actions">
           <Link to="/diaries/new">新しい日記を書く</Link>
         </div>
+
+        {deleteError && (
+          <p className="diary-delete-error" role="alert">
+            {deleteError}
+          </p>
+        )}
 
         {isLoading ? (
           <p>日記を読み込んでいます...</p>
@@ -88,6 +149,16 @@ function Diaries() {
                       <p>{diary.reflection}</p>
                     </>
                   )}
+                </div>
+
+                <div className="diary-card-actions">
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(diary)}
+                    disabled={deletingDiaryId !== null}
+                  >
+                    {deletingDiaryId === diary.id ? '削除中...' : '削除'}
+                  </button>
                 </div>
               </article>
             ))}
