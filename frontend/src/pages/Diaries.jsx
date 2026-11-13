@@ -152,6 +152,7 @@ function Diaries() {
                 </div>
 
                 <div className="diary-card-actions">
+                  <Link to={`/diaries/${diary.id}`}>詳細を見る</Link>
                   <button
                     type="button"
                     onClick={() => handleDelete(diary)}
