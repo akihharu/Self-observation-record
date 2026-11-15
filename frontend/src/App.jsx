@@ -6,6 +6,7 @@ import Login from './pages/Login.jsx'
 import Signup from './pages/Signup.jsx'
 import Diaries from './pages/Diaries.jsx'
 import DiaryNew from './pages/DiaryNew.jsx'
+import DiaryDetail from './pages/DiaryDetail.jsx'
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
       <Route path="/signup" element={<Signup />} />
       <Route path="/diaries" element={<Diaries />} />
       <Route path="/diaries/new" element={<DiaryNew />} />
+      <Route path="/diaries/:id" element={<DiaryDetail />} />
     </Routes>
   )
 }
