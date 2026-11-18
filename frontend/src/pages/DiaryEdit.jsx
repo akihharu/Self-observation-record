@@ -13,6 +13,8 @@ function DiaryEdit() {
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showOverwriteConfirm, setShowOverwriteConfirm] = useState(false)
+  const [pendingStatus, setPendingStatus] = useState(null)
 
   useEffect(() => {
     async function fetchDiary() {
@@ -61,21 +63,22 @@ function DiaryEdit() {
     fetchDiary()
   }, [id])
 
-  async function handleSave(status) {
+  async function handleSave(status, overwrite = false) {
     setError('')
-
+    setShowOverwriteConfirm(false)
+  
     if (event.trim() === '') {
       setError('今日の出来事を入力してください。')
       return
     }
-
+  
     if (status === 1 && reflection.trim() === '') {
       setError('完成として保存するには、振り返りも入力してください。')
       return
     }
-
+  
     setIsSubmitting(true)
-
+  
     try {
       const response = await fetch(
         `http://localhost:8080/api/diaries/${id}`,
@@ -90,38 +93,42 @@ function DiaryEdit() {
             event: event,
             reflection: reflection,
             status: status,
-            overwrite: false,
+            overwrite: overwrite,
           }),
         }
       )
-
+  
       if (response.status === 401) {
         setError('ログインが必要です。ログインしてください。')
         return
       }
-
+  
       if (response.status === 403) {
         setError('この日記を編集する権限がありません。')
         return
       }
-
+  
       if (response.status === 404) {
         setError('日記が見つかりませんでした。')
         return
       }
-
-      if (response.status === 400) {
-        setError(
-          '保存できませんでした。入力内容を確認してください。同じ日付の日記がすでにある可能性があります。'
-        )
+  
+      if (response.status === 409 && !overwrite) {
+        setPendingStatus(status)
+        setShowOverwriteConfirm(true)
         return
       }
-
+  
+      if (response.status === 400) {
+        setError('保存できませんでした。入力内容を確認してください。')
+        return
+      }
+  
       if (!response.ok) {
         setError('日記の更新に失敗しました。')
         return
       }
-
+  
       navigate(`/diaries/${id}`)
     } catch {
       setError('サーバーに接続できませんでした。')
@@ -194,6 +201,34 @@ function DiaryEdit() {
           </div>
 
           {error && <p>{error}</p>}
+
+          {showOverwriteConfirm && (
+            <div className="overwrite-confirm">
+              <p>
+                この日付には、すでに別の日記が存在します。
+              </p>
+              <p>
+                上書きすると、既存の日記は削除され、現在編集中の日記に置き換わります。
+                よろしいですか？
+              </p>
+          
+              <button
+                type="button"
+                disabled={isSubmitting}
+                onClick={() => handleSave(pendingStatus, true)}
+              >
+                上書きする
+              </button>
+          
+              <button
+                type="button"
+                disabled={isSubmitting}
+                onClick={() => setShowOverwriteConfirm(false)}
+              >
+                キャンセル
+              </button>
+            </div>
+          )}
 
           <button
             type="button"
