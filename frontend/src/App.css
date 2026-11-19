@@ -475,3 +475,71 @@
     padding: 18px;
   }
 }
+
+/* 日記編集時の上書き確認 */
+.overwrite-confirm {
+  margin-bottom: 24px;
+  padding: 20px;
+  border: 1px solid #e5c98a;
+  border-radius: 12px;
+  background: #fff9ec;
+}
+
+.overwrite-confirm p {
+  margin: 0 0 12px;
+  color: #765a25;
+  line-height: 1.8;
+}
+
+.overwrite-confirm p:last-of-type {
+  margin-bottom: 20px;
+}
+
+.overwrite-confirm button {
+  padding: 12px 20px;
+  border: 1px solid #956b20;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.overwrite-confirm button:first-of-type {
+  background: #956b20;
+  color: #ffffff;
+}
+
+.overwrite-confirm button:first-of-type:hover:not(:disabled) {
+  background: #7b5719;
+}
+
+.overwrite-confirm button:last-of-type {
+  margin-left: 12px;
+  background: #ffffff;
+  color: #765a25;
+}
+
+.overwrite-confirm button:last-of-type:hover:not(:disabled) {
+  background: #f7efd9;
+}
+
+.overwrite-confirm button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* スマートフォン表示 */
+@media (max-width: 600px) {
+  .overwrite-confirm {
+    padding: 18px;
+  }
+
+  .overwrite-confirm button {
+    width: 100%;
+  }
+
+  .overwrite-confirm button:last-of-type {
+    margin-top: 12px;
+    margin-left: 0;
+  }
+}
