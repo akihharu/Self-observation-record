@@ -543,3 +543,24 @@
     margin-left: 0;
   }
 }
+
+/* 認証画面の送信中のボタン */
+.auth-container button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.auth-container button:disabled:hover {
+  background-color: #2563eb;
+}
+
+/* 認証画面のエラー表示 */
+.auth-container form > p {
+  margin: 0 0 20px;
+  padding: 12px 16px;
+  border: 1px solid #f0c7c2;
+  border-radius: 8px;
+  background: #fff4f2;
+  color: #a23d35;
+  line-height: 1.7;
+}
